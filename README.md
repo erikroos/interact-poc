@@ -1,2 +1,2 @@
 # interact-poc
-POC for an interactive seminars
+POC for an interactive seminar app
