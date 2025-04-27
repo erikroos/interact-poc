@@ -9,10 +9,10 @@ InterAct
 <p>The app that makes seminars interactive and fun</p>
 <div id="home-links">
     <p>
-        <a href="">For teachers</a>
+        <a href="{{ url_for('teachers.index') }}">For teachers</a>
     </p>
     <p>
-        <a href="">For students</a>
+        <a href="{{ url_for('students.index') }}">For students</a>
     </p>
 </div>
 {% endblock %}
