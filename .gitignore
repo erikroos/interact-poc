@@ -1,2 +1,5 @@
 .interact-venv*/
+__pycache__/
 interact/__pycache__/
+instance/
+migrations/

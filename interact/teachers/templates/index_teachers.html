@@ -6,5 +6,12 @@ InterAct for Teachers
 
 {% block content %}
 <h1>Welcome to InterAct</h1>
-<p>Create a seminar</p>
+<div id="home-links">
+    <p>
+        <a href="{{ url_for('teachers.create') }}">Create a seminar</a>
+    </p>
+    <p>Existing seminars</p>
+    <ul>
+    </ul>
+</div>
 {% endblock %}

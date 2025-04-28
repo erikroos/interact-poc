@@ -1,6 +1,35 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_login import LoginManager
+
+### App configuration
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///interact.sqlite"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = "bvj3chSygv6duYc7gsyu0gC"
+
+### ORM
+
+db = SQLAlchemy()
+db.init_app(app)
+
+migrate = Migrate(app, db)
+
+### Login manager
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'teachers.login'
+
+from interact.teachers.models import User
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# Register Blueprints
 
 from interact.students.views import students_blueprint
 app.register_blueprint(students_blueprint, url_prefix="/students")
