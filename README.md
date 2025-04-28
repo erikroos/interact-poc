@@ -6,6 +6,7 @@ POC for an interactive seminar app
 1. Setup a virtual environment
 1. Activate virtual environment
 1. Install required packages: ``pip install -r requirements.txt``
+1. Copy example.config.json to config.json and set a suitable SECRET_KEY
 1. Generate database:
     1. ``flask --app app.py db init``
     1. ``flask --app app.py db migrate``

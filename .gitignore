@@ -3,3 +3,4 @@ __pycache__/
 interact/__pycache__/
 instance/
 migrations/
+config.json

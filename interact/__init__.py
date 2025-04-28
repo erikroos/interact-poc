@@ -2,13 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+import json
 
 ### App configuration
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///interact.sqlite"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = "bvj3chSygv6duYc7gsyu0gC"
+app.config.from_file("config.json", load=json.load)
 
 ### ORM
 
