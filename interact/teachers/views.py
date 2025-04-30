@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, login_user, logout_user
 from werkzeug.security import check_password_hash
 from interact import db
-from interact.teachers.forms import LoginForm, NewSeminarForm
-from interact.teachers.models import User, Seminar
+from interact.teachers.forms import LoginForm, NewSeminarForm, EnrollForm
+from interact.teachers.models import User, Seminar, Student
 
 teachers_blueprint = Blueprint('teachers', __name__, template_folder='templates')
 
@@ -41,7 +41,7 @@ def create():
     new_form = NewSeminarForm()
     if request.method == "POST":
         if new_form.validate_on_submit():
-            new_seminar = Seminar(new_form.name.data)
+            new_seminar = Seminar(new_form.name.data, new_form.nr_students.data)
             db.session.add(new_seminar)
             db.session.commit()
             return redirect(url_for("teachers.index"))
@@ -62,4 +62,31 @@ def activate(id:int):
         seminar.active = False
         db.session.commit()
         flash("Seminar closed")
+    return redirect(url_for("teachers.index"))
+
+@teachers_blueprint.route("/enroll/<int:id>", methods=["POST", "GET"])
+@login_required
+def enroll(id:int):
+    seminar = Seminar.query.filter_by(id=id).first()
+    form = EnrollForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            for i in range(seminar.nr_students):
+                new_student = Student(request.form.get(f"name{i}"), seminar.id)
+                db.session.add(new_student)
+            db.session.commit()
+            flash("Students enrolled in seminar")
+            return redirect(url_for("teachers.index"))
+        else:
+            flash("Form not filled in correctly")
+
+    return render_template("enroll_teachers.html", form=form, seminar=seminar)
+
+@teachers_blueprint.route('/delete/<int:id>')
+@login_required
+def delete(id:int):
+    seminar = Seminar.query.filter_by(id=id).first()
+    db.session.delete(seminar)
+    db.session.commit()
+    flash("Seminar deleted")
     return redirect(url_for("teachers.index"))

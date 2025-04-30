@@ -10,3 +10,6 @@ class NewSeminarForm(FlaskForm):
     name = StringField("Name", validators=[validators.DataRequired()])
     nr_students = IntegerField("Expected number of students")
     submit = SubmitField("Create")
+
+class EnrollForm(FlaskForm):
+    submit = SubmitField("Enroll")
