@@ -10,9 +10,13 @@ Login
     {% endif %}
 
     <form method="POST">
-    {{ form.hidden_tag() }}
-    {{ form.username.label }} {{ form.username() }}<br>
-    {{ form.password.label }} {{ form.password() }}<br>
-    {{ form.submit() }}
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.username.label(class="form-label") }} {{ form.username(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.password.label(class="form-label") }} {{ form.password(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
     </form>
 {% endblock %}

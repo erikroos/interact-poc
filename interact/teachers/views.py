@@ -1,20 +1,20 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, login_user, logout_user
 from werkzeug.security import check_password_hash
-from interact.teachers.forms import LoginForm
-from interact.teachers.models import User
+from interact import db
+from interact.teachers.forms import LoginForm, NewSeminarForm
+from interact.teachers.models import User, Seminar
 
 teachers_blueprint = Blueprint('teachers', __name__, template_folder='templates')
 
 @teachers_blueprint.route("/")
 def index():
-    return render_template("index_teachers.html")
+    seminars = Seminar.query.all()
+    return render_template("index_teachers.html", seminars=seminars)
 
 @teachers_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm()
-    feedback = None
-
     if login_form.validate_on_submit():
         username = login_form.username.data
         password = login_form.password.data
@@ -24,18 +24,28 @@ def login():
             login_user(user)
             return redirect(url_for('teachers.index'))
         else:
-            feedback = "Foutieve login."
+            flash("Foutieve login")
 
-    return render_template("login.html", form=login_form, feedback=feedback)
+    return render_template("login.html", form=login_form)
 
 @teachers_blueprint.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash("Je bent nu uitgelogd.")
+    flash("You are logged out")
     return redirect(url_for('home'))
 
-@teachers_blueprint.route('/create')
+@teachers_blueprint.route('/create', methods=["GET", "POST"])
 @login_required
 def create():
-    return render_template("new_seminar.html")
+    new_form = NewSeminarForm()
+    if request.method == "POST":
+        if new_form.validate_on_submit():
+            new_seminar = Seminar(new_form.name.data)
+            db.session.add(new_seminar)
+            db.session.commit()
+            return redirect(url_for("teachers.index"))
+        else:
+            flash("Form not filled in correctly")
+        
+    return render_template("new_seminar.html", form=new_form)

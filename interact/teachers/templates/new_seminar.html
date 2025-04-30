@@ -5,11 +5,14 @@ Create a seminar
 {% endblock %}
 
 {% block content %}
-    {% if feedback %}
-        <p>{{feedback}}</p>
-    {% endif %}
-    <form method="POST">
+<form method="POST">
     {{ form.hidden_tag() }}
-    {{ form.submit() }}
-    </form>
+    <div class="mb-3">
+        {{ form.name.label(class="form-label") }} {{ form.name(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.nr_students.label(class="form-label") }} {{ form.nr_students(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
 {% endblock %}

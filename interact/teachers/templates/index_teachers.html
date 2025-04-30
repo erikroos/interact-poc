@@ -12,6 +12,9 @@ InterAct for Teachers
     </p>
     <p>Existing seminars</p>
     <ul>
+    {% for seminar in seminars %}
+        <li>{{seminar.name}}</li>
+    {% endfor %}
     </ul>
 </div>
 {% endblock %}
