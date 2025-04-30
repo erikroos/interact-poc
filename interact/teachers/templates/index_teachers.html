@@ -11,10 +11,16 @@ InterAct for Teachers
         <a href="{{ url_for('teachers.create') }}">Create a seminar</a>
     </p>
     <p>Existing seminars</p>
-    <ul>
     {% for seminar in seminars %}
-        <li>{{seminar.name}}</li>
+        <div class="list-group list-group-horizontal">
+            <div class="list-group-item list-group-item-action flex-fill">{{seminar.name}}</div>
+            <div class="list-group-item list-group-item-action flex-fill">{{seminar.code}}</div>
+            <a class="list-group-item list-group-item-action flex-fill" href="">Edit</a>
+            <a class="list-group-item list-group-item-action flex-fill" href="">Enroll students</a>
+            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.activate', id=seminar.id) }}">
+                {% if seminar.active %}Close{% else %}Open{% endif %}
+            </a>
+        </div>
     {% endfor %}
-    </ul>
 </div>
 {% endblock %}

@@ -24,7 +24,7 @@ def login():
             login_user(user)
             return redirect(url_for('teachers.index'))
         else:
-            flash("Foutieve login")
+            flash("Incorrect login")
 
     return render_template("login.html", form=login_form)
 
@@ -49,3 +49,17 @@ def create():
             flash("Form not filled in correctly")
         
     return render_template("new_seminar.html", form=new_form)
+
+@teachers_blueprint.route('/activate/<int:id>')
+@login_required
+def activate(id:int):
+    seminar = Seminar.query.filter_by(id=id).first()
+    if seminar.active == False:
+        seminar.active = True
+        db.session.commit()
+        flash(f"Seminar is now open. Use code <b>{seminar.code}</b> to share.")
+    else:
+        seminar.active = False
+        db.session.commit()
+        flash("Seminar closed")
+    return redirect(url_for("teachers.index"))

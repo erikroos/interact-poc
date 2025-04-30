@@ -6,5 +6,13 @@ InterAct for Students
 
 {% block content %}
 <h1>Welcome to InterAct</h1>
-<p>Find a seminar</p>
+<h2>Join a seminar</h2>
+<p>Enter the seminar code below and press Join</p>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.code.label(class="form-label") }} {{ form.code(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
 {% endblock %}
