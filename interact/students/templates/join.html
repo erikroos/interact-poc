@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+InterAct for Students
+{% endblock %}
+
+{% block content %}
+<h1>Welcome to InterAct</h1>
+<h2>Join a seminar</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.name.label(class="form-label") }} {{ form.name(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}

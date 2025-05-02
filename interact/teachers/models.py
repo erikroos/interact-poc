@@ -24,9 +24,11 @@ class Seminar(db.Model):
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
+    joined = db.Column(db.Boolean, default=False)
     seminar_id = db.Column(db.Integer, db.ForeignKey("seminar.id"))
     seminar = db.relationship("Seminar", back_populates="students")
 
     def __init__(self, name, seminar_id):
         self.name = name
+        self.joined = False
         self.seminar_id = seminar_id
