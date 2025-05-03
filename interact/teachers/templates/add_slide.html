@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add a slide
+{% endblock %}
+
+{% block content %}
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        <label class="form-label" for="title">{% if type == 0 %}Question{% else %}Title{% endif %}</label>
+        {{ form.title(class="form-control") }}
+    </div>
+
+    {% if type == 0 %}
+
+        {% for i in range(nr_answers) %}
+        <div class="mb-3 row align-items-center">
+            <div class="col-auto">
+                <label class="form-label" for="answer{{i+1}}">Answer {{i+1}}</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" id="answer{{i+1}}" name="answer{{i+1}}">
+            </div>
+            <div class="col-auto">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="answer_correct" value="{{i+1}}">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    {% else %}
+
+        <div class="mb-3">
+            {{ form.text.label(class="form-label") }} {{ form.text(class="form-control") }}
+        </div>
+
+    {% endif %}
+
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}

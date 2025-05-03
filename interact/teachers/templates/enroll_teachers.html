@@ -10,8 +10,8 @@ Enroll students
     {{ form.hidden_tag() }}
     {% for i in range(seminar.nr_students) %}
     <div class="mb-3">
-        <label for="" class="form-label">Student {{i+1}} name</label>
-        <input type="text" class="form-control" id="name{{i}}" name="name{{i}}">
+        <label for="name{{i}}" class="form-label">Student {{i+1}} name</label>
+        <input type="text" class="form-control" id="name{{i}}" name="name{{i}}" value="{% if i < students|length %}{{students[i].name}}{% endif %}">
     </div>
     {% endfor %}
     {{ form.submit(class="btn btn-primary") }}

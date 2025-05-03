@@ -2,14 +2,16 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, login_user, logout_user
 from werkzeug.security import check_password_hash
 from interact import db
-from interact.teachers.forms import LoginForm, NewSeminarForm, EnrollForm
-from interact.teachers.models import User, Seminar, Student
+from interact.teachers.forms import LoginForm, NewSeminarForm, EnrollForm, NewSlideForm
+from interact.teachers.models import User, Seminar, Student, Slide, Answer
 
 teachers_blueprint = Blueprint('teachers', __name__, template_folder='templates')
 
 @teachers_blueprint.route("/")
 def index():
     seminars = Seminar.query.all()
+    for seminar in seminars:
+        seminar.nr_joined_students = Student.query.filter_by(seminar_id=seminar.id, joined=True).count()
     return render_template("index_teachers.html", seminars=seminars)
 
 @teachers_blueprint.route('/login', methods=['GET', 'POST'])
@@ -68,21 +70,24 @@ def activate(id:int):
 @login_required
 def enroll(id:int):
     seminar = Seminar.query.filter_by(id=id).first()
+    students = Student.query.filter_by(seminar_id=id).all()
     form = EnrollForm()
     if request.method == "POST":
         if form.validate_on_submit():
             for i in range(seminar.nr_students):
-                new_student = Student(request.form.get(f"name{i}"), seminar.id)
-                db.session.add(new_student)
+                name = request.form.get(f"name{i}")
+                if name is not None and len(name) > 0 and Student.query.filter_by(name=name, seminar_id=id).first() is None: # only add new students
+                    new_student = Student(name, seminar.id)
+                    db.session.add(new_student)
             db.session.commit()
             flash("Students enrolled in seminar")
             return redirect(url_for("teachers.index"))
         else:
             flash("Form not filled in correctly")
 
-    return render_template("enroll_teachers.html", form=form, seminar=seminar)
+    return render_template("enroll_teachers.html", form=form, seminar=seminar, students=students)
 
-@teachers_blueprint.route('/delete/<int:id>')
+@teachers_blueprint.route("/delete/<int:id>")
 @login_required
 def delete(id:int):
     seminar = Seminar.query.filter_by(id=id).first()
@@ -90,3 +95,29 @@ def delete(id:int):
     db.session.commit()
     flash("Seminar deleted")
     return redirect(url_for("teachers.index"))
+
+@teachers_blueprint.route("/edit/<int:id>")
+@login_required
+def edit(id:int):
+    seminar = Seminar.query.filter_by(id=id).first()
+    return render_template("seminar.html", seminar=seminar)
+
+@teachers_blueprint.route("/add_slide/<int:id>/<int:type>", methods=["POST", "GET"])
+@login_required
+def add_slide(id:int, type:int):
+    seminar = Seminar.query.filter_by(id=id).first()
+    form = NewSlideForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            new_slide = Slide(type, form.title.data, id, form.text.data)
+            db.session.add(new_slide)
+            db.session.commit()
+            if type == 0:
+                # TODO add answers
+                pass
+            flash(f"Slide added")
+            return redirect(url_for("teachers.edit", id=id, type=type))
+        else:
+            flash("Form not filled in correctly")
+
+    return render_template("add_slide.html", form=form, type=type, seminar=seminar, nr_answers=3)

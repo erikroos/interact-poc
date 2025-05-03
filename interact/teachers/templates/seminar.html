@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit seminar
+{% endblock %}
+
+{% block content %}
+<h1>Seminar {{seminar.name}}</h1>
+<h2>Slides:</h2>
+{% if seminar.slides|length > 0 %}
+<ol>
+{% for slide in seminar.slides: %}
+    <li>({% if slide.type == 0 %}Q{% else %}T{% endif %}) {{slide.title}}</li>
+{% endfor %}
+</ol>
+{% else %}
+<p>No slides yet...</p>
+{% endif %}
+<p>
+    <a href="{{ url_for('teachers.add_slide', id=seminar.id, type=0) }}">Add question slide</a><br>
+    <a href="{{ url_for('teachers.add_slide', id=seminar.id, type=1) }}">Add text slide</a>
+</p>
+{% endblock %}

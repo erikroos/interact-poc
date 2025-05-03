@@ -14,6 +14,7 @@ InterAct for Teachers
     <div class="list-group list-group-horizontal">
         <div class="list-group-item list-group-item-action flex-fill"><b>Name</b></div>
         <div class="list-group-item list-group-item-action flex-fill"><b>Code</b></div>
+        <div class="list-group-item list-group-item-action flex-fill"><b>Status</b></div>
         <div class="list-group-item list-group-item-action flex-fill"><b>Enrollment</b></div>
         <div class="list-group-item list-group-item-action flex-fill"><b>Activation</b></div>
         <div class="list-group-item list-group-item-action flex-fill"></div>
@@ -23,16 +24,15 @@ InterAct for Teachers
         <div class="list-group list-group-horizontal">
             <div class="list-group-item list-group-item-action flex-fill">{{seminar.name}}</div>
             <div class="list-group-item list-group-item-action flex-fill">{{seminar.code}}</div>
-            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.enroll', id=seminar.id) }}">
-                Enroll students ({{seminar.students|length}} / {{seminar.nr_students}} max)
-            </a>
+            <div class="list-group-item list-group-item-action flex-fill">
+                {{seminar.students|length}} / {{seminar.nr_students}} enrolled<br>{{seminar.nr_joined_students}} joined
+            </div>
+            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.enroll', id=seminar.id) }}">Enroll students</a>
             <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.activate', id=seminar.id) }}">
                 {% if seminar.active %}OPEN{% else %}CLOSED{% endif %} (click to {% if seminar.active %}close{% else %}open{% endif %})
             </a>
-            <a class="list-group-item list-group-item-action flex-fill" href="">Edit</a>
-            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.delete', id=seminar.id) }}">
-                Delete
-            </a>
+            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.edit', id=seminar.id) }}">Edit</a>
+            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.delete', id=seminar.id) }}">Delete</a>
         </div>
     {% endfor %}
 </div>

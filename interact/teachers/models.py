@@ -14,6 +14,7 @@ class Seminar(db.Model):
     active = db.Column(db.Boolean, default=False)
     nr_students = db.Column(db.Integer)
     students = db.relationship("Student", back_populates="seminar")
+    slides = db.relationship("Slide", back_populates="seminar")
 
     def __init__(self, name, nr_students):
         self.code = generate_code()
@@ -32,3 +33,30 @@ class Student(db.Model):
         self.name = name
         self.joined = False
         self.seminar_id = seminar_id
+
+class Slide(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Integer, nullable=False, default=0) # 0 = question slide, 1 = text slide (more types may follow)
+    title = db.Column(db.String(100)) # for question OR text heading
+    text = db.Column(db.String(500), nullable=True)
+    seminar_id = db.Column(db.Integer, db.ForeignKey("seminar.id"))
+    seminar = db.relationship("Seminar", back_populates="slides")
+    answers = db.relationship("Answer", back_populates="slide")
+
+    def __init__(self, type, title, seminar_id, text=None):
+        self.type = type
+        self.title = title
+        self.text = text
+        self.seminar_id = seminar_id
+
+class Answer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(100))
+    correct = db.Column(db.Boolean)
+    slide_id = db.Column(db.Integer, db.ForeignKey("slide.id"))
+    slide = db.relationship("Slide", back_populates="answers")
+
+    def __init__(self, text, correct, slide_id):
+        self.text = text
+        self.correct = correct
+        self.slide_id = slide_id
