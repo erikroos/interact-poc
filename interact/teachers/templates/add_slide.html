@@ -14,17 +14,17 @@ Add a slide
 
     {% if type == 0 %}
 
-        {% for i in range(nr_answers) %}
+        {% for i in range(1, nr_answers+1) %}
         <div class="mb-3 row align-items-center">
             <div class="col-auto">
-                <label class="form-label" for="answer{{i+1}}">Answer {{i+1}}</label>
+                <label class="form-label" for="answer{{i+1}}">Answer {{i}}</label>
             </div>
             <div class="col">
-                <input type="text" class="form-control" id="answer{{i+1}}" name="answer{{i+1}}">
+                <input type="text" class="form-control" id="answer{{i}}" name="answer{{i}}">
             </div>
             <div class="col-auto">
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="answer_correct" value="{{i+1}}">
+                    <input class="form-check-input" type="radio" name="answer_correct" value="{{i}}">
                 </div>
             </div>
         </div>

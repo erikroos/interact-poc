@@ -105,19 +105,22 @@ def edit(id:int):
 @teachers_blueprint.route("/add_slide/<int:id>/<int:type>", methods=["POST", "GET"])
 @login_required
 def add_slide(id:int, type:int):
+    NR_ANSWERS = 3
     seminar = Seminar.query.filter_by(id=id).first()
     form = NewSlideForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            new_slide = Slide(type, form.title.data, id, form.text.data)
+            new_slide = Slide(type, form.title.data, len(seminar.slides) + 1, id, form.text.data)
             db.session.add(new_slide)
             db.session.commit()
             if type == 0:
-                # TODO add answers
-                pass
+                for i in range(1, NR_ANSWERS+1):
+                    new_answer = Answer(request.form.get(f"answer{i}"), request.form.get("answer_correct") == str(i), new_slide.id)
+                    db.session.add(new_answer)
+                db.session.commit()
             flash(f"Slide added")
             return redirect(url_for("teachers.edit", id=id, type=type))
         else:
             flash("Form not filled in correctly")
 
-    return render_template("add_slide.html", form=form, type=type, seminar=seminar, nr_answers=3)
+    return render_template("add_slide.html", form=form, type=type, seminar=seminar, nr_answers=NR_ANSWERS)
