@@ -13,8 +13,8 @@ class Seminar(db.Model):
     name = db.Column(db.String(50), nullable=False)
     active = db.Column(db.Boolean, default=False)
     nr_students = db.Column(db.Integer)
-    students = db.relationship("Student", back_populates="seminar")
-    slides = db.relationship("Slide", back_populates="seminar", order_by="Slide.slide_order")
+    students = db.relationship("Student", back_populates="seminar", cascade="all, delete-orphan", passive_deletes=True)
+    slides = db.relationship("Slide", back_populates="seminar", order_by="Slide.slide_order", cascade="all, delete-orphan", passive_deletes=True)
 
     def __init__(self, name, nr_students):
         self.code = generate_code()
@@ -26,8 +26,16 @@ class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     joined = db.Column(db.Boolean, default=False)
-    seminar_id = db.Column(db.Integer, db.ForeignKey("seminar.id"))
+    seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="students")
+
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['seminar_id'], ['seminar.id'],
+            ondelete='CASCADE',
+            name='fk_student_seminar'
+        ),
+    )
 
     def __init__(self, name, seminar_id):
         self.name = name
@@ -40,9 +48,17 @@ class Slide(db.Model):
     title = db.Column(db.String(100)) # for question OR text heading
     text = db.Column(db.String(500), nullable=True)
     slide_order = db.Column(db.Integer)
-    seminar_id = db.Column(db.Integer, db.ForeignKey("seminar.id"))
+    seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="slides")
-    answers = db.relationship("Answer", back_populates="slide")
+    answers = db.relationship("Answer", back_populates="slide", cascade="all, delete-orphan", passive_deletes=True)
+
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['seminar_id'], ['seminar.id'],
+            ondelete='CASCADE',
+            name='fk_slide_seminar'
+        ),
+    )
 
     def __init__(self, type, title, slide_order, seminar_id, text=None):
         self.type = type
@@ -55,8 +71,16 @@ class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(100))
     correct = db.Column(db.Boolean)
-    slide_id = db.Column(db.Integer, db.ForeignKey("slide.id"))
+    slide_id = db.Column(db.Integer)
     slide = db.relationship("Slide", back_populates="answers")
+
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['slide_id'], ['slide.id'],
+            ondelete='CASCADE',
+            name='fk_answer_slide'
+        ),
+    )
 
     def __init__(self, text, correct, slide_id):
         self.text = text

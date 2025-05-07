@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+InterAct for Students
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ slide.title }}</h1>
+
+{% if slide.type == 1 %}
+<p>{{ slide.text }}</p>
+{% endif %}
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {% if slide.type == 0 %}
+        {% for answer in slide.answers %}
+            {{ answer.text }}
+        {% endfor %}
+    {% endif %}
+
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+
+{% endblock %}

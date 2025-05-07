@@ -16,6 +16,15 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
+from sqlalchemy import event
+
+with app.app_context():
+    @event.listens_for(db.engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
 ### Login manager
 
 login_manager = LoginManager()

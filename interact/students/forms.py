@@ -8,3 +8,6 @@ class JoinForm(FlaskForm):
 class JoinWithNameForm(FlaskForm):
     name = SelectField("Choose your name from the list")
     submit = SubmitField("Enter")
+
+class SlideForm(FlaskForm):
+    submit = SubmitField("Next")

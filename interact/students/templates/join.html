@@ -6,7 +6,7 @@ InterAct for Students
 
 {% block content %}
 <h1>Welcome to InterAct</h1>
-<h2>Join a seminar</h2>
+<h2>Join seminar {{ seminar.name }}</h2>
 <form method="POST">
     {{ form.hidden_tag() }}
     <div class="mb-3">
