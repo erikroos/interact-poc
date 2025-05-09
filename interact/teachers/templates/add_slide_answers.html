@@ -4,11 +4,11 @@
         <label class="form-label" for="answer{{i+1}}">Answer {{i}}</label>
     </div>
     <div class="col">
-        <input type="text" class="form-control" id="answer{{i}}" name="answer{{i}}">
+        <input type="text" class="form-control" id="answer{{i}}" name="answer{{i}}" required>
     </div>
     <div class="col-auto">
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="answer_correct" value="{{i}}">
+            <input class="form-check-input" type="radio" name="answer_correct" value="{{i}}" required>
         </div>
     </div>
 </div>

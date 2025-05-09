@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from interact import db
 from interact.students.forms import JoinForm, JoinWithNameForm, SlideForm
-from interact.teachers.models import Seminar, Student, Slide
+from interact.teachers.models import Seminar, Student, Slide, Answer
 
 students_blueprint = Blueprint('students', __name__, template_folder='templates')
 
@@ -40,6 +40,7 @@ def join(id:int):
                 session["student_name"] = student.name
                 session["seminar_id"] = id
                 session["slide"] = 1
+                session["score"] = 0
 
                 return redirect(url_for("students.seminar"))
             else:
@@ -55,11 +56,28 @@ def seminar():
         # We're out of slides
         flash("Seminar completed!")
         return redirect(url_for("students.index"))
+    seminar = Seminar.query.filter_by(id=session["seminar_id"]).first()
     form = SlideForm()
     if request.method == "POST":
         if form.validate_on_submit:
+            if current_slide.type == 0:
+                # Question slide, check if correct
+                answer_id = request.form.get("answer")
+                answer = Answer.query.filter_by(id=answer_id).first()
+                if answer.correct == True:
+                    session["score"] += 1
+                    student = Student.query.filter_by(id=session["student_id"]).first()
+                    if student.score is None:
+                        student.score = 1
+                    else:
+                        student.score += 1
+                    db.session.commit()
+                    flash(f"Correct answer! Current score: {session["score"]}")
+                else:
+                    flash(f"Wrong answer... Current score: {session["score"]}")
+
             session["slide"] += 1
             return redirect(url_for("students.seminar"))
         else:
             flash("Form not filled in correctly")
-    return render_template("slide.html", slide=current_slide, form=form)
+    return render_template("slide.html", slide=current_slide, nr_slides=len(seminar.slides), form=form)

@@ -28,6 +28,7 @@ class Student(db.Model):
     joined = db.Column(db.Boolean, default=False)
     seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="students")
+    score = db.Column(db.Integer(), default=0)
 
     __table_args__ = (
         db.ForeignKeyConstraint(

@@ -6,7 +6,7 @@ InterAct for Students
 
 {% block content %}
 
-<h1>{{ slide.title }}</h1>
+<h1>{{ slide.title }} ({{slide.slide_order}}/{{nr_slides}})</h1>
 
 {% if slide.type == 1 %}
 <p>{{ slide.text }}</p>
@@ -17,7 +17,16 @@ InterAct for Students
 
     {% if slide.type == 0 %}
         {% for answer in slide.answers %}
-            {{ answer.text }}
+            <div class="mb-3 row align-items-center">
+                <div class="col-auto">
+                    <label class="form-label" for="answer">{{answer.text}}</label>
+                </div>
+                <div class="col-auto">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="answer" value="{{answer.id}}" required>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
     {% endif %}
 
