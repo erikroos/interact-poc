@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+<h1>Dashboard for seminar {{seminar.name}}</h1>
+
+<h2>Students</h2>
+<ul>
+{% for student in seminar.students %}
+    <li>{{student.name}}: {{student.score}}</li>
+{% endfor %}
+</ul>
+
+<script>
+    // Reload every 5 seconds
+    // TODO: make a smarter solution using AJAX/websockets/whatever
+    setTimeout(
+    function() {
+        window.location.reload(1);
+    },
+    5000,
+);
+</script>
+{% endblock %}

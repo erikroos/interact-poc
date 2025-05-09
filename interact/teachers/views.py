@@ -124,3 +124,9 @@ def add_slide(id:int, type:int):
             flash("Form not filled in correctly")
 
     return render_template("add_slide.html", form=form, type=type, seminar=seminar, nr_answers=NR_ANSWERS)
+
+@teachers_blueprint.route("/dashboard/<int:id>")
+@login_required
+def dashboard(id:int):
+    seminar = Seminar.query.filter_by(id=id).first()
+    return render_template("dashboard.html", seminar=seminar)
