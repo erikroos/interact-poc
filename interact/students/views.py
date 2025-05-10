@@ -34,6 +34,7 @@ def join(id:int):
             if student is not None:
                 # Mark student as 'joined' in the DB
                 student.joined = True
+                student.current_slide = 1
                 db.session.commit()
                 # Prepare session to track progress
                 session["student_id"] = student.id
@@ -60,23 +61,24 @@ def seminar():
     form = SlideForm()
     if request.method == "POST":
         if form.validate_on_submit:
+            student = Student.query.filter_by(id=session["student_id"]).first()
             if current_slide.type == 0:
                 # Question slide, check if correct
                 answer_id = request.form.get("answer")
                 answer = Answer.query.filter_by(id=answer_id).first()
                 if answer.correct == True:
                     session["score"] += 1
-                    student = Student.query.filter_by(id=session["student_id"]).first()
                     if student.score is None:
                         student.score = 1
                     else:
                         student.score += 1
-                    db.session.commit()
                     flash(f"Correct answer! Current score: {session["score"]}")
                 else:
                     flash(f"Wrong answer... Current score: {session["score"]}")
 
             session["slide"] += 1
+            student.current_slide += 1
+            db.session.commit()
             return redirect(url_for("students.seminar"))
         else:
             flash("Form not filled in correctly")

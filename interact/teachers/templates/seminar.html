@@ -10,7 +10,7 @@ Edit seminar
 {% if seminar.slides|length > 0 %}
 <ol>
 {% for slide in seminar.slides: %}
-    <li>({% if slide.type == 0 %}Q{% else %}T{% endif %}) {{slide.title}}</li>
+    <li>({% if slide.type == 0 %}Q{% elif slide.type == 2%}G{% else %}T{% endif %}) {{slide.title}}</li>
 {% endfor %}
 </ol>
 {% else %}
@@ -18,6 +18,9 @@ Edit seminar
 {% endif %}
 <p>
     <a href="{{ url_for('teachers.add_slide', id=seminar.id, type=0) }}">Add question slide</a><br>
-    <a href="{{ url_for('teachers.add_slide', id=seminar.id, type=1) }}">Add text slide</a>
+    <a href="{{ url_for('teachers.add_slide', id=seminar.id, type=1) }}">Add text slide</a><br>
+    {% if gf_slide_present == False %}
+    <a href="{{ url_for('teachers.add_slide', id=seminar.id, type=2) }}">Add group forming slide</a>
+    {% endif %}
 </p>
 {% endblock %}

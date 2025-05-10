@@ -8,12 +8,24 @@ Add a slide
 <form method="POST">
     {{ form.hidden_tag() }}
     <div class="mb-3">
-        <label class="form-label" for="title">{% if type == 0 %}Question{% else %}Title{% endif %}</label>
-        {{ form.title(class="form-control") }}
+        <label class="form-label" for="title">
+        {% if type == 0 %}
+            Question
+        {% else %}
+            Title
+        {% endif %}
+        </label>
+        {% if type == 2 %}
+            {{ form.title(class="form-control", value="Group forming") }}
+        {% else %}
+            {{ form.title(class="form-control", value="") }}
+        {% endif %}
     </div>
 
     {% if type == 0 %}
         {% include 'add_slide_answers.html' %}
+    {% elif type == 2 %}
+        {% include 'add_slide_groups.html' %}
     {% else %}
         {% include 'add_slide_text.html' %}
     {% endif %}

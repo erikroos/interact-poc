@@ -100,7 +100,8 @@ def delete(id:int):
 @login_required
 def edit(id:int):
     seminar = Seminar.query.filter_by(id=id).first()
-    return render_template("seminar.html", seminar=seminar)
+    gf_slide_present = Slide.query.filter_by(seminar_id=id, type=2).count() > 0
+    return render_template("seminar.html", seminar=seminar, gf_slide_present=gf_slide_present)
 
 @teachers_blueprint.route("/add_slide/<int:id>/<int:type>", methods=["POST", "GET"])
 @login_required

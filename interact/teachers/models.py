@@ -28,13 +28,21 @@ class Student(db.Model):
     joined = db.Column(db.Boolean, default=False)
     seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="students")
-    score = db.Column(db.Integer(), default=0)
+    score = db.Column(db.Integer, default=0)
+    current_slide = db.Column(db.Integer, default=0)
+    group_id = db.Column(db.Integer)
+    group = db.relationship("Group", back_populates="students")
 
     __table_args__ = (
         db.ForeignKeyConstraint(
             ['seminar_id'], ['seminar.id'],
             ondelete='CASCADE',
             name='fk_student_seminar'
+        ),
+        db.ForeignKeyConstraint(
+            ['group_id'], ['group.id'],
+            ondelete='CASCADE',
+            name='fk_student_group'
         ),
     )
 
@@ -43,9 +51,13 @@ class Student(db.Model):
         self.joined = False
         self.seminar_id = seminar_id
 
+class Group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    students = db.relationship("Student", back_populates="group", cascade="all, delete-orphan", passive_deletes=True)
+
 class Slide(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.Integer, nullable=False, default=0) # 0 = question slide, 1 = text slide (more types may follow)
+    type = db.Column(db.Integer, nullable=False, default=0) # 0 = question slide, 1 = text slide, 2 = group forming slide (more types may follow)
     title = db.Column(db.String(100)) # for question OR text heading
     text = db.Column(db.String(500), nullable=True)
     slide_order = db.Column(db.Integer)

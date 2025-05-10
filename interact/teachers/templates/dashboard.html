@@ -8,11 +8,26 @@ Dashboard
 <h1>Dashboard for seminar {{seminar.name}}</h1>
 
 <h2>Students</h2>
-<ul>
+
+<div class="list-group list-group-horizontal">
+    <div class="list-group-item list-group-item-action flex-fill"><b>Name</b></div>
+    <div class="list-group-item list-group-item-action flex-fill"><b>Progress</b></div>
+    <div class="list-group-item list-group-item-action flex-fill"><b>Score</b></div>
+</div>
+
 {% for student in seminar.students %}
-    <li>{{student.name}}: {{student.score}}</li>
+<div class="list-group list-group-horizontal">
+    <div class="list-group-item list-group-item-action flex-fill">{{student.name}}</div>
+    <div class="list-group-item list-group-item-action flex-fill">
+    {% if student.current_slide > seminar.slides|length %}
+        done
+    {% else %}
+        {{student.current_slide}}/{{seminar.slides|length}}
+    {% endif %}
+    </div>
+    <div class="list-group-item list-group-item-action flex-fill">{{student.score}}</div>
+</div>
 {% endfor %}
-</ul>
 
 <script>
     // Reload every 5 seconds
