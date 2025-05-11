@@ -15,6 +15,7 @@ class Seminar(db.Model):
     nr_students = db.Column(db.Integer)
     students = db.relationship("Student", back_populates="seminar", cascade="all, delete-orphan", passive_deletes=True)
     slides = db.relationship("Slide", back_populates="seminar", order_by="Slide.slide_order", cascade="all, delete-orphan", passive_deletes=True)
+    groups = db.relationship("Group", back_populates="seminar", cascade="all, delete-orphan", passive_deletes=True)
 
     def __init__(self, name, nr_students):
         self.code = generate_code()
@@ -32,6 +33,7 @@ class Student(db.Model):
     current_slide = db.Column(db.Integer, default=0)
     group_id = db.Column(db.Integer)
     group = db.relationship("Group", back_populates="students")
+    reached_gf = db.Column(db.Boolean, default=False)
 
     __table_args__ = (
         db.ForeignKeyConstraint(
@@ -54,6 +56,19 @@ class Student(db.Model):
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     students = db.relationship("Student", back_populates="group", cascade="all, delete-orphan", passive_deletes=True)
+    seminar_id = db.Column(db.Integer)
+    seminar = db.relationship("Seminar", back_populates="groups")
+
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['seminar_id'], ['seminar.id'],
+            ondelete='CASCADE',
+            name='fk_group_seminar'
+        ),
+    )
+
+    def __init__(self, seminar_id):
+        self.seminar_id = seminar_id
 
 class Slide(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,6 +79,8 @@ class Slide(db.Model):
     seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="slides")
     answers = db.relationship("Answer", back_populates="slide", cascade="all, delete-orphan", passive_deletes=True)
+    gf_type = db.Column(db.Integer, nullable=True) # 0 = random, 1 = mix-level, 2 = same-level
+    gf_nr_per_group = db.Column(db.Integer, nullable=True)
 
     __table_args__ = (
         db.ForeignKeyConstraint(

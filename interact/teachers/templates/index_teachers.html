@@ -24,7 +24,7 @@ InterAct for Teachers
         <div class="list-group list-group-horizontal">
             <div class="list-group-item list-group-item-action flex-fill">{{seminar.name}}</div>
             <div class="list-group-item list-group-item-action flex-fill">{{seminar.code}}</div>
-            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.edit', id=seminar.id) }}">Add slides</a>
+            <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.edit', id=seminar.id) }}">Manage slides</a>
             <a class="list-group-item list-group-item-action flex-fill" href="{{ url_for('teachers.enroll', id=seminar.id) }}">Enroll students</a>
             <div class="list-group-item list-group-item-action flex-fill">
                 {{seminar.students|length}} / {{seminar.nr_students}} enrolled<br>{{seminar.nr_joined_students}} joined

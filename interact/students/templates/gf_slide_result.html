@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+InterAct for Students
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ slide.title }} ({{slide.slide_order}}/{{nr_slides}})</h1>
+
+<p>Group forming complete!</p>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from interact import db
 from interact.students.forms import JoinForm, JoinWithNameForm, SlideForm
-from interact.teachers.models import Seminar, Student, Slide, Answer
+from interact.teachers.models import Seminar, Student, Slide, Answer, Group
 
 students_blueprint = Blueprint('students', __name__, template_folder='templates')
 
@@ -57,11 +57,42 @@ def seminar():
         # We're out of slides
         flash("Seminar completed!")
         return redirect(url_for("students.index"))
+    
+    student = Student.query.filter_by(id=session["student_id"]).first()
     seminar = Seminar.query.filter_by(id=session["seminar_id"]).first()
     form = SlideForm()
+    
+    if current_slide.type == 2:
+        # Group forming slide
+        if request.method == "GET":
+            # Page visit: check if all students have reached this point
+            student.reached_gf = True
+            db.session.commit()
+            nr_students_reached_gf = Student.query.filter_by(seminar_id=seminar.id, reached_gf=True).count()
+            if nr_students_reached_gf < seminar.nr_students:
+                return render_template("gf_slide_waiting.html", slide=current_slide, nr_slides=len(seminar.slides))
+            else:
+                from interact.lib.group_forming import GroupForming
+                students = Student.query.filter_by(seminar_id=seminar.id).all()
+                nr_groups = -(-len(students) // current_slide.gf_nr_per_group)
+                groups = [Group(seminar.id) for _ in range(nr_groups)]
+                db.session.add_all(groups)
+                db.session.commit()
+                gf = GroupForming(students, groups)
+                gf.divide(current_slide.gf_type)
+                students = gf.get_students()
+                groups = gf.get_groups()
+                db.session.commit()
+                return render_template("gf_slide_result.html", slide=current_slide, form=form, nr_slides=len(seminar.slides))
+        else:
+            # POST, so group forming is complete
+            session["slide"] += 1
+            student.current_slide += 1
+            db.session.commit()
+            return redirect(url_for("students.seminar"))
+
     if request.method == "POST":
         if form.validate_on_submit:
-            student = Student.query.filter_by(id=session["student_id"]).first()
             if current_slide.type == 0:
                 # Question slide, check if correct
                 answer_id = request.form.get("answer")

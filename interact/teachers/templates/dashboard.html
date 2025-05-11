@@ -13,6 +13,8 @@ Dashboard
     <div class="list-group-item list-group-item-action flex-fill"><b>Name</b></div>
     <div class="list-group-item list-group-item-action flex-fill"><b>Progress</b></div>
     <div class="list-group-item list-group-item-action flex-fill"><b>Score</b></div>
+    <div class="list-group-item list-group-item-action flex-fill"><b>Reached group forming?</b></div>
+    <div class="list-group-item list-group-item-action flex-fill"><b>Group</b></div>
 </div>
 
 {% for student in seminar.students %}
@@ -26,8 +28,25 @@ Dashboard
     {% endif %}
     </div>
     <div class="list-group-item list-group-item-action flex-fill">{{student.score}}</div>
+    <div class="list-group-item list-group-item-action flex-fill">
+    {% if student.reached_gf %}
+        yes
+    {% else %}
+        no
+    {% endif %}
+    </div>
+    <div class="list-group-item list-group-item-action flex-fill">{{student.group.id}}</div>
 </div>
 {% endfor %}
+
+<h2>Groups</h2>
+{% if seminar.groups|length %}
+    {% for group in seminar.groups %}
+    <p>{{group.id}}: {{group.students}}</p>
+    {% endfor %}
+{% else %}
+    <p>There are no groups (yet).</p>
+{% endif %}
 
 <script>
     // Reload every 5 seconds

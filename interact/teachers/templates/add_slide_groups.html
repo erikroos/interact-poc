@@ -1,3 +1,14 @@
 <div class="mb-3">
-    Group forming questions
+    <div class="mb-3">
+        <label for="gf_type">Group forming method</label>
+        <select class="form-control" type="number" name="gf_type">
+            <option value="0">Random</option>
+            <option value="1">Mix-level</option>
+            <option value="2">Same level</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="gf_nr_per_group">Number of students per group</label>
+        <input class="form-control" type="number" name="gf_nr_per_group" min="1" max="{{seminar.nr_students}}">
+    </div>
 </div>

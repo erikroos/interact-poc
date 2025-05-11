@@ -6,11 +6,15 @@ Edit seminar
 
 {% block content %}
 <h1>Seminar {{seminar.name}}</h1>
-<h2>Slides:</h2>
+<h2>Slides</h2>
 {% if seminar.slides|length > 0 %}
 <ol>
 {% for slide in seminar.slides: %}
-    <li>({% if slide.type == 0 %}Q{% elif slide.type == 2%}G{% else %}T{% endif %}) {{slide.title}}</li>
+    <li>
+        ({% if slide.type == 0 %}Q{% elif slide.type == 2%}G{% else %}T{% endif %})
+        {{slide.title}}
+        <a href="{{ url_for('teachers.delete_slide', id=slide.id, seminar_id=seminar.id) }}">delete</a>
+    </li>
 {% endfor %}
 </ol>
 {% else %}

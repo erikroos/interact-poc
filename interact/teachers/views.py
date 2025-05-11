@@ -115,9 +115,15 @@ def add_slide(id:int, type:int):
             db.session.add(new_slide)
             db.session.commit()
             if type == 0:
+                # Process question slide specifics
                 for i in range(1, NR_ANSWERS+1):
                     new_answer = Answer(request.form.get(f"answer{i}"), request.form.get("answer_correct") == str(i), new_slide.id)
                     db.session.add(new_answer)
+                db.session.commit()
+            elif type == 2:
+                # Process group forming slide specifics
+                new_slide.gf_type = request.form.get("gf_type")
+                new_slide.gf_nr_per_group = request.form.get("gf_nr_per_group")
                 db.session.commit()
             flash(f"Slide added")
             return redirect(url_for("teachers.edit", id=id, type=type))
@@ -125,6 +131,15 @@ def add_slide(id:int, type:int):
             flash("Form not filled in correctly")
 
     return render_template("add_slide.html", form=form, type=type, seminar=seminar, nr_answers=NR_ANSWERS)
+
+@teachers_blueprint.route("/delete_slide/<int:id>/<int:seminar_id>")
+@login_required
+def delete_slide(id:int, seminar_id:int):
+    slide = Slide.query.filter_by(id=id).first()
+    db.session.delete(slide)
+    db.session.commit()
+    flash("Slide deleted")
+    return redirect(url_for("teachers.edit", id=seminar_id))
 
 @teachers_blueprint.route("/dashboard/<int:id>")
 @login_required
