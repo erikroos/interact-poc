@@ -10,8 +10,10 @@ class GroupForming():
             self.divide_random()
         elif method == 1:
             self.divide_mixlevel()
-        else:
+        elif method == 2:
             self.divide_samelevel()
+        else: # fallback is random
+            self.divide_random()
 
     def divide_random(self):
         pass

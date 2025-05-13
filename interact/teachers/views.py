@@ -132,13 +132,36 @@ def add_slide(id:int, type:int):
 
     return render_template("add_slide.html", form=form, type=type, seminar=seminar, nr_answers=NR_ANSWERS)
 
-@teachers_blueprint.route("/delete_slide/<int:id>/<int:seminar_id>")
+@teachers_blueprint.route('/seminar/<int:seminar_id>/slide/<int:id>/delete')
 @login_required
-def delete_slide(id:int, seminar_id:int):
+def delete_slide(seminar_id, id):
     slide = Slide.query.filter_by(id=id).first()
     db.session.delete(slide)
     db.session.commit()
     flash("Slide deleted")
+    return redirect(url_for("teachers.edit", id=seminar_id))
+
+@teachers_blueprint.route('/seminar/<int:seminar_id>/slide/<int:id>/up')
+@login_required
+def move_slide_up(seminar_id, id):
+    slide = Slide.query.filter_by(id=id).first()
+    if slide.slide_order > 1:
+        prev_slide = Slide.query.filter_by(seminar_id=seminar_id, slide_order=slide.slide_order-1).first()
+        prev_slide.slide_order += 1
+        slide.slide_order -= 1
+        db.session.commit()
+    return redirect(url_for("teachers.edit", id=seminar_id))
+
+@teachers_blueprint.route('/seminar/<int:seminar_id>/slide/<int:id>/down')
+@login_required
+def move_slide_down(seminar_id, id):
+    slide = Slide.query.filter_by(id=id).first()
+    nr_slides = Slide.query.filter_by(seminar_id=seminar_id).count()
+    if slide.slide_order < nr_slides:
+        next_slide = Slide.query.filter_by(seminar_id=seminar_id, slide_order=slide.slide_order+1).first()
+        next_slide.slide_order -= 1
+        slide.slide_order += 1
+        db.session.commit()
     return redirect(url_for("teachers.edit", id=seminar_id))
 
 @teachers_blueprint.route("/dashboard/<int:id>")

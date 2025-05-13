@@ -74,8 +74,8 @@ def seminar():
             else:
                 from interact.lib.group_forming import GroupForming
                 students = Student.query.filter_by(seminar_id=seminar.id).all()
-                nr_groups = -(-len(students) // current_slide.gf_nr_per_group)
-                groups = [Group(seminar.id) for _ in range(nr_groups)]
+                nr_groups = -(-len(students) // current_slide.gf_nr_per_group) # rounded-up integer division
+                groups = [Group(seminar.id, n) for n in range(1, nr_groups+1)]
                 db.session.add_all(groups)
                 db.session.commit()
                 gf = GroupForming(students, groups)

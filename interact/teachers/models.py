@@ -55,6 +55,7 @@ class Student(db.Model):
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer)
     students = db.relationship("Student", back_populates="group", cascade="all, delete-orphan", passive_deletes=True)
     seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="groups")
@@ -67,8 +68,9 @@ class Group(db.Model):
         ),
     )
 
-    def __init__(self, seminar_id):
+    def __init__(self, seminar_id, number):
         self.seminar_id = seminar_id
+        self.number = number
 
 class Slide(db.Model):
     id = db.Column(db.Integer, primary_key=True)
