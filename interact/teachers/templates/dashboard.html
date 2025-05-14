@@ -35,14 +35,14 @@ Dashboard
         no
     {% endif %}
     </div>
-    <div class="list-group-item list-group-item-action flex-fill">{{student.group.id}}</div>
+    <div class="list-group-item list-group-item-action flex-fill">{{student.group.number}}</div>
 </div>
 {% endfor %}
 
-<h2>Groups</h2>
+<h2 id="groups">Groups</h2>
 {% if seminar.groups|length %}
     {% for group in seminar.groups %}
-    <p>{{group.id}}: {{group.students}}</p>
+    <p>{{group.number}}: {% for student in group.students %}{{student.name}} ({{student.score}})&nbsp;{% endfor %}</p>
     {% endfor %}
 {% else %}
     <p>There are no groups (yet).</p>

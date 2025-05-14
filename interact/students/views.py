@@ -78,12 +78,12 @@ def seminar():
                 groups = [Group(seminar.id, n) for n in range(1, nr_groups+1)]
                 db.session.add_all(groups)
                 db.session.commit()
-                gf = GroupForming(students, groups)
+                gf = GroupForming(current_slide.gf_nr_per_group, students, groups)
                 gf.divide(current_slide.gf_type)
                 students = gf.get_students()
                 groups = gf.get_groups()
                 db.session.commit()
-                return render_template("gf_slide_result.html", slide=current_slide, form=form, nr_slides=len(seminar.slides))
+                return render_template("gf_slide_result.html", slide=current_slide, form=form, nr_slides=len(seminar.slides), student=student)
         else:
             # POST, so group forming is complete
             session["slide"] += 1
