@@ -169,3 +169,11 @@ def move_slide_down(seminar_id, id):
 def dashboard(id:int):
     seminar = Seminar.query.filter_by(id=id).first()
     return render_template("dashboard.html", seminar=seminar)
+
+@teachers_blueprint.route("/dashboard/demo")
+@login_required
+def demo():
+    from interact.lib.demo import populate_for_demo
+    populate_for_demo()
+    flash("Demo seminar set up")
+    return redirect(url_for("teachers.index"))

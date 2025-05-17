@@ -7,9 +7,11 @@ InterAct for Teachers
 {% block content %}
 <h1>Welcome to InterAct</h1>
 <div id="home-links">
-    <p>
-        <a href="{{ url_for('teachers.create') }}">Create a seminar</a>
-    </p>
+    <div class="mb-2">
+        <a class="btn btn-primary mr-2" href="{{ url_for('teachers.create') }}">Create a seminar</a>
+        <a class="btn btn-primary" href="{{ url_for('teachers.demo') }}">Start demo</a>
+    </div>
+    </div>
     <h2>Existing seminars</h2>
     <div class="list-group list-group-horizontal">
         <div class="list-group-item list-group-item-action flex-fill"><b>Name</b></div>
