@@ -1,7 +1,7 @@
 # interact-poc
 POC for an interactive seminar app
 
-## steps
+## Steps for local deployment
 
 1. Setup a virtual environment
 1. Activate virtual environment
@@ -13,3 +13,18 @@ POC for an interactive seminar app
     1. ``flask --app app.py db upgrade``
 1. Seed the database: `python seed.py`
 1. Run the app: ``python app.py``
+
+## Steps for GCP deployment
+
+1. (only once) ``gcloud auth login``
+1. (only once) ``gcloud config set project flask-on-gcp-419112``
+1. (only once) ``ggcloud services enable run.googleapis.com``
+1. ``gcloud builds submit --tag gcr.io/flask-on-gcp-419112/flask-app``
+1.
+```
+gcloud run deploy flask-app \
+  --image gcr.io/flask-on-gcp-419112/flask-app \
+  --platform managed \
+  --region europe-west1 \
+  --allow-unauthenticated
+```

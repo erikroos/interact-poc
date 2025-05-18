@@ -3,11 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 import json
+import os
 
 ### App configuration
 
 app = Flask(__name__)
-app.config.from_file("config.json", load=json.load)
+
+config_path = os.path.join(os.path.dirname(__file__), "config.json")
+try:
+    app.config.from_file(config_path, load=json.load)
+except Exception as e:
+    print(f"Error loading config file ({config_path}) from {__file__}: {e}")
 
 ### ORM
 

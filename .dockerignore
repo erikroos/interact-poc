@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenvs
+.interact-venv*/
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+*.dockerignore
+
+# IDEs and editors
+*.swp
+*.swo
+*.idea/
+.vscode/
+
+# Database (gets generated)
+*.sqlite
+*.sqlite3

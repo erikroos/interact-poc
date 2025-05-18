@@ -1,5 +1,6 @@
 {
     "SQLALCHEMY_DATABASE_URI": "sqlite:///interact.sqlite",
     "SQLALCHEMY_TRACK_MODIFICATION": "False",
-    "SECRET_KEY": "abc123"
+    "SECRET_KEY": "abc123",
+    "DEFAULT_ADMIN_PASS": "1234"
 }

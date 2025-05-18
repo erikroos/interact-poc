@@ -1,0 +1,22 @@
+# GCloud ignore file
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+env/
+venv/
+.interact-venv/
+
+# IDEs
+*.swp
+*.swo
+*.idea/
+.vscode/
+
+# Git
+.git
+.gitignore
