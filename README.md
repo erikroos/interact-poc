@@ -14,7 +14,7 @@ POC for an interactive seminar app
 1. Seed the database: `python seed.py`
 1. Run the app: ``python app.py``
 
-## Steps for GCP build an deployment
+## Steps for GCP build and deployment
 
 1. (only once) ``gcloud auth login``
 1. (only once) ``gcloud config set project flask-on-gcp-419112``

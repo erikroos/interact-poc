@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Login
+Register
 {% endblock %}
 
 {% block content %}
@@ -9,7 +9,7 @@ Login
         <p>{{feedback}}</p>
     {% endif %}
 
-    <h1>Teacher login</h1>
+    <h1>Teacher registration</h1>
 
     <form method="POST">
         {{ form.hidden_tag() }}
@@ -19,10 +19,9 @@ Login
         <div class="mb-3">
             {{ form.password.label(class="form-label") }} {{ form.password(class="form-control") }}
         </div>
+        <div class="mb-3">
+            {{ form.pass_confirm.label(class="form-label") }} {{ form.pass_confirm(class="form-control") }}
+        </div>
         {{ form.submit(class="btn btn-primary") }}
     </form>
-
-    <div class="mt-4">
-        No teacher account yet? <a href="{{ url_for('teachers.register') }}">Register here</a>
-    </div>
 {% endblock %}

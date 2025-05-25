@@ -1,18 +1,22 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_required, login_user, logout_user
-from werkzeug.security import check_password_hash
+from flask_login import login_required, login_user, logout_user, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
 from interact import db
-from interact.teachers.forms import LoginForm, NewSeminarForm, EnrollForm, NewSlideForm
+from interact.teachers.forms import LoginForm, NewSeminarForm, EnrollForm, NewSlideForm, RegistrationForm
 from interact.teachers.models import User, Seminar, Student, Slide, Answer
 
 teachers_blueprint = Blueprint('teachers', __name__, template_folder='templates')
 
-@teachers_blueprint.route("/")
-def index():
-    seminars = Seminar.query.all()
-    for seminar in seminars:
-        seminar.nr_joined_students = Student.query.filter_by(seminar_id=seminar.id, joined=True).count()
-    return render_template("index_teachers.html", seminars=seminars)
+@teachers_blueprint.route('/register', methods=['GET', 'POST'])
+def register():
+    reg_form = RegistrationForm()
+    if reg_form.validate_on_submit():
+        user = User(reg_form.username.data, generate_password_hash(reg_form.password.data))
+        db.session.add(user)
+        db.session.commit()
+        flash('Thank you for registering as a teacher! You can now log in.')
+        return redirect(url_for('teachers.login'))
+    return render_template('register.html', form=reg_form)
 
 @teachers_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
@@ -24,7 +28,11 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for('teachers.index'))
+
+            next = request.args.get('next')
+            if next == None or not next[0]=='/':
+                next = url_for('teachers.index')
+            return redirect(next)
         else:
             flash("Incorrect login")
 
@@ -37,13 +45,21 @@ def logout():
     flash("You are logged out")
     return redirect(url_for('home'))
 
+@teachers_blueprint.route("/")
+@login_required
+def index():
+    seminars = Seminar.query.filter_by(user_id=current_user.id).all()
+    for seminar in seminars:
+        seminar.nr_joined_students = Student.query.filter_by(seminar_id=seminar.id, joined=True).count()
+    return render_template("index_teachers.html", seminars=seminars)
+
 @teachers_blueprint.route('/create', methods=["GET", "POST"])
 @login_required
 def create():
     new_form = NewSeminarForm()
     if request.method == "POST":
         if new_form.validate_on_submit():
-            new_seminar = Seminar(new_form.name.data, new_form.nr_students.data)
+            new_seminar = Seminar(new_form.name.data, new_form.nr_students.data, current_user.id)
             db.session.add(new_seminar)
             db.session.commit()
             return redirect(url_for("teachers.index"))
@@ -55,7 +71,10 @@ def create():
 @teachers_blueprint.route('/activate/<int:id>')
 @login_required
 def activate(id:int):
-    seminar = Seminar.query.filter_by(id=id).first()
+    seminar = Seminar.query.filter_by(id=id, user_id=current_user.id).first()
+    if seminar is None:
+        flash("Unknown or invalid seminar")
+        return redirect(url_for("teachers.index"))
     if seminar.active == False:
         seminar.active = True
         db.session.commit()
@@ -69,7 +88,10 @@ def activate(id:int):
 @teachers_blueprint.route("/enroll/<int:id>", methods=["POST", "GET"])
 @login_required
 def enroll(id:int):
-    seminar = Seminar.query.filter_by(id=id).first()
+    seminar = Seminar.query.filter_by(id=id, user_id=current_user.id).first()
+    if seminar is None:
+        flash("Unknown or invalid seminar")
+        return redirect(url_for("teachers.index"))
     students = Student.query.filter_by(seminar_id=id).all()
     form = EnrollForm()
     if request.method == "POST":
@@ -90,7 +112,10 @@ def enroll(id:int):
 @teachers_blueprint.route("/delete/<int:id>")
 @login_required
 def delete(id:int):
-    seminar = Seminar.query.filter_by(id=id).first()
+    seminar = Seminar.query.filter_by(id=id, user_id=current_user.id).first()
+    if seminar is None:
+        flash("Unknown or invalid seminar")
+        return redirect(url_for("teachers.index"))
     db.session.delete(seminar)
     db.session.commit()
     flash("Seminar deleted")
@@ -99,7 +124,10 @@ def delete(id:int):
 @teachers_blueprint.route("/edit/<int:id>")
 @login_required
 def edit(id:int):
-    seminar = Seminar.query.filter_by(id=id).first()
+    seminar = Seminar.query.filter_by(id=id, user_id=current_user.id).first()
+    if seminar is None:
+        flash("Unknown or invalid seminar")
+        return redirect(url_for("teachers.index"))
     gf_slide_present = Slide.query.filter_by(seminar_id=id, type=2).count() > 0
     return render_template("seminar.html", seminar=seminar, gf_slide_present=gf_slide_present)
 
@@ -107,7 +135,10 @@ def edit(id:int):
 @login_required
 def add_slide(id:int, type:int):
     NR_ANSWERS = 3
-    seminar = Seminar.query.filter_by(id=id).first()
+    seminar = Seminar.query.filter_by(id=id, user_id=current_user.id).first()
+    if seminar is None:
+        flash("Unknown or invalid seminar")
+        return redirect(url_for("teachers.index"))
     form = NewSlideForm()
     if request.method == "POST":
         if form.validate_on_submit():
@@ -167,13 +198,16 @@ def move_slide_down(seminar_id, id):
 @teachers_blueprint.route("/dashboard/<int:id>")
 @login_required
 def dashboard(id:int):
-    seminar = Seminar.query.filter_by(id=id).first()
+    seminar = Seminar.query.filter_by(id=id, user_id=current_user.id).first()
+    if seminar is None:
+        flash("Unknown or invalid seminar")
+        return redirect(url_for("teachers.index"))
     return render_template("dashboard.html", seminar=seminar)
 
 @teachers_blueprint.route("/dashboard/demo")
 @login_required
 def demo():
     from interact.lib.demo import populate_for_demo
-    populate_for_demo()
+    populate_for_demo(current_user.id)
     flash("Demo seminar set up")
     return redirect(url_for("teachers.index"))

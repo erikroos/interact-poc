@@ -22,5 +22,7 @@ venv/
 .gitignore
 
 # Database (gets generated)
+instance/
+migrations/
 *.sqlite
 *.sqlite3

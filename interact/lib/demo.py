@@ -1,12 +1,12 @@
 from interact import db, app
 from interact.teachers.models import Seminar, Student, Slide, Answer
 
-def populate_for_demo():
+def populate_for_demo(user_id):
     student_names = ["Henk", "Tjeerd", "Karel", "Piet", "Jan", "Kees"]
     student_scores = [0, 2, 1, 2, 0]
 
     with app.app_context():
-        test = Seminar("Test", 6)
+        test = Seminar("Test", 6, user_id)
         test.active = True
         db.session.add(test)
         db.session.commit()

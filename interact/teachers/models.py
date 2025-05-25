@@ -6,9 +6,16 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
+    seminars = db.relationship("Seminar", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
 
 class Seminar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    user = db.relationship("User", back_populates="seminars")
     code = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     active = db.Column(db.Boolean, default=False)
@@ -17,11 +24,20 @@ class Seminar(db.Model):
     slides = db.relationship("Slide", back_populates="seminar", order_by="Slide.slide_order", cascade="all, delete-orphan", passive_deletes=True)
     groups = db.relationship("Group", back_populates="seminar", cascade="all, delete-orphan", passive_deletes=True)
 
-    def __init__(self, name, nr_students):
+    def __init__(self, name, nr_students, user_id):
         self.code = generate_code()
         self.name = name
         self.nr_students = nr_students
+        self.user_id = user_id
         self.active = False
+
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['user_id'], ['user.id'],
+            ondelete='CASCADE',
+            name='fk_seminar_user'
+        ),
+    )
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
