@@ -131,6 +131,14 @@ def edit(id:int):
     gf_slide_present = Slide.query.filter_by(seminar_id=id, type=2).count() > 0
     return render_template("seminar.html", seminar=seminar, gf_slide_present=gf_slide_present)
 
+@teachers_blueprint.route('/slide-preview/<int:id>')
+@login_required
+def slide_preview(id):
+    slide = Slide.query.filter_by(id=id).first()
+    if slide is None:
+        return "Cannot find slide", 404
+    return render_template("slide_preview.html", slide=slide, nr_slides=len(slide.seminar.slides))
+
 @teachers_blueprint.route("/add_slide/<int:id>/<int:type>", methods=["POST", "GET"])
 @login_required
 def add_slide(id:int, type:int):

@@ -6,45 +6,52 @@ Edit seminar
 
 {% block content %}
 
-<h1>Seminar {{seminar.name}}</h1>
+<h1 class="mb-3">Seminar {{seminar.name}}</h1>
 
 <h2>Slides</h2>
 {% if seminar.slides|length > 0 %}
-<ol class="list-group list-group-numbered">
-  {% for slide in seminar.slides %}
-    <li class="list-group-item d-flex justify-content-between align-items-start">
-      <div>
-        <span class="badge bg-secondary me-2">
-          {% if slide.type == 0 %}Q{% elif slide.type == 2 %}G{% else %}T{% endif %}
-        </span>
-        {{ slide.title }}
-      </div>
-      <div class="btn-group btn-group-sm" role="group">
-        <a href="{{ url_for('teachers.move_slide_up', id=slide.id, seminar_id=seminar.id) }}"
-           class="btn btn-outline-primary"
-           title="Up">
-          ↑
-        </a>
-        <a href="{{ url_for('teachers.move_slide_down', id=slide.id, seminar_id=seminar.id) }}"
-           class="btn btn-outline-primary"
-           title="Down">
-          ↓
-        </a>
-        <a href="{{ url_for('teachers.delete_slide', id=slide.id, seminar_id=seminar.id) }}"
-           class="btn btn-outline-danger"
-           title="Delete"
-           onclick="return confirm('Are you sure you want to delete this slide?');">
-          🗑️
-        </a>
-      </div>
-    </li>
-  {% endfor %}
-</ol>
+<div class="d-flex flex-column flex-md-row">
+  <div class="w-25">
+    <ol class="list-group list-group-numbered">
+      {% for slide in seminar.slides %}
+        <li class="list-group-item d-flex justify-content-between align-items-start" data-slide-id="{{ slide.id }}">
+          <div>
+            <span class="badge bg-secondary me-2">
+              {% if slide.type == 0 %}Q{% elif slide.type == 2 %}G{% else %}T{% endif %}
+            </span>
+          </div>
+          <div class="btn-group btn-group-sm" role="group">
+            <a href="{{ url_for('teachers.move_slide_up', id=slide.id, seminar_id=seminar.id) }}"
+              class="btn btn-outline-primary"
+              title="Up">
+              ↑
+            </a>
+            <a href="{{ url_for('teachers.move_slide_down', id=slide.id, seminar_id=seminar.id) }}"
+              class="btn btn-outline-primary"
+              title="Down">
+              ↓
+            </a>
+            <a href="{{ url_for('teachers.delete_slide', id=slide.id, seminar_id=seminar.id) }}"
+              class="btn btn-outline-danger"
+              title="Delete"
+              onclick="return confirm('Are you sure you want to delete this slide?');">
+              🗑️
+            </a>
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+
+  <div class="w-75 ps-3">
+    <div id="slide-preview"></div>
+  </div>
+</div>
 {% else %}
 <p class="text-muted">No slides yet...</p>
 {% endif %}
 
-<div class="mt-2 mb-2">
+<div class="mt-4 mb-2">
     <a class="btn btn-primary" href="{{ url_for('teachers.add_slide', id=seminar.id, type=0) }}">Add question slide</a>
 </div>
 <div class="mb-2">
@@ -55,5 +62,29 @@ Edit seminar
     <a class="btn btn-primary" href="{{ url_for('teachers.add_slide', id=seminar.id, type=2) }}">Add group forming slide</a>
 </div>
 {% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const listItems = document.querySelectorAll('.list-group-item');
+
+  listItems.forEach(item => {
+    item.addEventListener('mouseenter', async function () {
+      const slideId = this.dataset.slideId;
+
+      try {
+        const response = await fetch(`/teachers/slide-preview/${slideId}`);
+        if (!response.ok) throw new Error('Network response was not OK');
+
+        const html = await response.text();
+        document.getElementById('slide-preview').innerHTML = html;
+      } catch (error) {
+        console.error('Error loading slide preview:', error);
+        document.getElementById('slide-preview').innerHTML = '<p class="text-danger">Error loading slide preview</p>';
+      }
+    });
+  });
+});
+</script>
+
 
 {% endblock %}

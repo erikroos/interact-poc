@@ -1,0 +1,17 @@
+<div class="card">
+  <div class="card-body">
+
+    <h3>{{ slide.title }} ({{slide.slide_order}}/{{nr_slides}})</h3>
+
+    {% if slide.type == 0 %}
+        <ol>
+        {% for answer in slide.answers %}
+            <li><span {% if answer.correct %} style="font-weight:bold;"{% endif %}>{{answer.text}}</span></li>
+        {% endfor %}
+        </ol>
+    {% elif slide.type == 1 %}
+        <p>{{ slide.text }}</p>
+    {% endif %}
+
+  </div>
+</div>
