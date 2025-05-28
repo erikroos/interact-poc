@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+InterAct
+{% endblock %}
+
+{% block content %}
+<h1>InterAct Administrator</h1>
+
+<h2>Users</h2>
+    <div class="list-group list-group-horizontal">
+        <div class="list-group-item list-group-item-action flex-fill"><b>Name</b></div>
+        <div class="list-group-item list-group-item-action flex-fill"><b># Seminars</b></div>
+    </div>
+    {% for user in users %}
+        <div class="list-group list-group-horizontal">
+            <div class="list-group-item list-group-item-action flex-fill">{{user.username}}</div>
+            <div class="list-group-item list-group-item-action flex-fill">{{user.seminars|length}}</div>
+        </div>
+    {% endfor %}
+{% endblock %}

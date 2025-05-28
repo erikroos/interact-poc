@@ -7,10 +7,12 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
     seminars = db.relationship("Seminar", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    role = db.Column(db.String(10), nullable=False, default="user", server_default=db.text("'user'"))
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, role="user"):
         self.username = username
         self.password = password
+        self.role = role
 
 class Seminar(db.Model):
     id = db.Column(db.Integer, primary_key=True)

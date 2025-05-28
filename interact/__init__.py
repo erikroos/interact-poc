@@ -50,3 +50,6 @@ app.register_blueprint(students_blueprint, url_prefix="/students")
 
 from interact.teachers.views import teachers_blueprint
 app.register_blueprint(teachers_blueprint, url_prefix="/teachers")
+
+from interact.admin.views import admin_blueprint
+app.register_blueprint(admin_blueprint, url_prefix="/admin")

@@ -2,7 +2,7 @@ from interact import db, app
 from interact.teachers.models import User
 from werkzeug.security import generate_password_hash
 
-new_user = User(username="admin", password=generate_password_hash(app.config["DEFAULT_ADMIN_PASS"]))
+new_user = User("admin", generate_password_hash(app.config["DEFAULT_ADMIN_PASS"]), "admin")
 
 with app.app_context():
     # Remove all existing

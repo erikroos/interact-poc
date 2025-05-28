@@ -1,5 +1,5 @@
 # TODO's for InterAct
 
-* Registration option
-* Support for multiple teacher accounts
+* Move models.py one level up from teachers folder
+* Move login etc. to separate blueprint?
 * Demo mode has option to set number of pre-run students
