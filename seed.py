@@ -1,5 +1,5 @@
 from interact import db, app
-from interact.teachers.models import User
+from interact.models import User
 from werkzeug.security import generate_password_hash
 
 new_user = User("admin", generate_password_hash(app.config["DEFAULT_ADMIN_PASS"]), "admin")

@@ -1,5 +1,5 @@
 from interact import db, app
-from interact.teachers.models import Seminar, Student, Slide, Answer
+from interact.models import Seminar, Student, Slide, Answer
 
 def populate_for_demo(user_id):
     student_names = ["Henk", "Tjeerd", "Karel", "Piet", "Jan", "Kees"]

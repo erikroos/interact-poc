@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from interact import db
 from interact.students.forms import JoinForm, JoinWithNameForm, SlideForm
-from interact.teachers.models import Seminar, Student, Slide, Answer, Group
+from interact.models import Seminar, Student, Slide, Answer, Group
 
 students_blueprint = Blueprint('students', __name__, template_folder='templates')
 

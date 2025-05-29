@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, abort, current_app
-from flask_login import login_required, current_user
-from interact.teachers.models import User
+from flask import Blueprint, render_template, current_app, flash, redirect, url_for
+from flask_login import current_user
+from interact.models import User
 from functools import wraps
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
@@ -11,7 +11,8 @@ def admin_required(f):
         if not current_user.is_authenticated:
             return current_app.login_manager.unauthorized()
         if current_user.role != 'admin':
-            abort(403)
+            flash("You are not authorized to view this page")
+            return redirect(url_for("home"))
         return f(*args, **kwargs)
     return decorated_function
 

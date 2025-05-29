@@ -35,15 +35,18 @@ with app.app_context():
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'teachers.login'
+login_manager.login_view = 'auth.login'
 
-from interact.teachers.models import User
+from interact.models import User
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 # Register Blueprints
+
+from interact.auth.views import auth_blueprint
+app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
 from interact.students.views import students_blueprint
 app.register_blueprint(students_blueprint, url_prefix="/students")
