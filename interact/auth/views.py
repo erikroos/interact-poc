@@ -15,7 +15,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Thank you for registering as a teacher! You can now log in.')
-        return redirect(url_for('teachers.login'))
+        return redirect(url_for('auth.login'))
     return render_template('register.html', form=reg_form)
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
