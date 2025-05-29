@@ -151,6 +151,15 @@ def delete_slide(seminar_id, id):
     db.session.delete(slide)
     db.session.commit()
     flash("Slide deleted")
+    
+    # Reset slide order
+    new_order = 1
+    slides = Slide.query.filter_by(seminar_id=seminar_id).order_by("slide_order").all()
+    for slide in slides:
+        slide.slide_order = new_order
+        new_order += 1
+    db.session.commit()
+
     return redirect(url_for("teachers.edit", id=seminar_id))
 
 @teachers_blueprint.route('/seminar/<int:seminar_id>/slide/<int:id>/up')
