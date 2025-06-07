@@ -1,4 +1,3 @@
-from interact.models import Student, Group
 from random import shuffle
 
 class GroupForming():

@@ -1,7 +1,7 @@
 from interact import db, app
 from interact.models import Seminar, Student, Slide, Answer
 
-def populate_for_demo(user_id):
+def populate_for_demo(user_id, nr_students_at_gf=5):
     student_names = ["Henk", "Tjeerd", "Karel", "Piet", "Jan", "Kees"]
     student_scores = [0, 2, 1, 2, 0]
 
@@ -48,7 +48,7 @@ def populate_for_demo(user_id):
         students = []
         for i in range(6):
             student = Student(student_names[i], test.id)
-            if i < 5:
+            if i < nr_students_at_gf:
                 student.current_slide = 4
                 student.joined = True
                 student.score = student_scores[i]

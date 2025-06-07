@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Create demo seminar
+{% endblock %}
+
+{% block content %}
+<h1>Create demo seminar</h1>
+<p><em>A new seminar with a few slides (welcome, two questions, group forming and closing slide) will be set up.
+Six students will be added. You can determine how many of them will have reached the group forming slide.
+Using incognito tabs, you can work through the seminar as the remaining students, enabling you to see the group forming in action.</em></p>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.nr_students_at_gf.label(class="form-label") }} {{ form.nr_students_at_gf(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}

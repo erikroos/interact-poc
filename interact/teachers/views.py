@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import current_user
 from interact import db
-from interact.teachers.forms import NewSeminarForm, EnrollForm, NewSlideForm
+from interact.teachers.forms import NewSeminarForm, EnrollForm, NewSlideForm, DemoSeminarForm
 from interact.models import Seminar, Student, Slide, Answer
 from functools import wraps
 
@@ -35,6 +35,7 @@ def create():
             new_seminar = Seminar(new_form.name.data, new_form.nr_students.data, current_user.id)
             db.session.add(new_seminar)
             db.session.commit()
+            flash("New seminar successfully created")
             return redirect(url_for("teachers.index"))
         else:
             flash("Form not filled in correctly")
@@ -194,10 +195,14 @@ def dashboard(id:int):
         return redirect(url_for("teachers.index"))
     return render_template("dashboard.html", seminar=seminar)
 
-@teachers_blueprint.route("/dashboard/demo")
+@teachers_blueprint.route("/dashboard/demo", methods=["POST", "GET"])
 @user_required
 def demo():
-    from interact.lib.demo import populate_for_demo
-    populate_for_demo(current_user.id)
-    flash("Demo seminar set up")
-    return redirect(url_for("teachers.index"))
+    form = DemoSeminarForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            from interact.lib.demo import populate_for_demo
+            populate_for_demo(current_user.id, form.nr_students_at_gf.data)
+            flash("Demo seminar set up")
+            return redirect(url_for("teachers.index"))
+    return render_template("demo_seminar.html", form=form)
