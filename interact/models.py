@@ -48,6 +48,8 @@ class Student(db.Model):
     seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="students")
     score = db.Column(db.Integer, default=0)
+    motivation = db.Column(db.Integer, default=0)
+    preparation = db.Column(db.Integer, default=0)
     current_slide = db.Column(db.Integer, default=0)
     group_id = db.Column(db.Integer)
     group = db.relationship("Group", back_populates="students")
@@ -99,7 +101,7 @@ class Slide(db.Model):
     seminar_id = db.Column(db.Integer)
     seminar = db.relationship("Seminar", back_populates="slides")
     answers = db.relationship("Answer", back_populates="slide", cascade="all, delete-orphan", passive_deletes=True)
-    gf_type = db.Column(db.Integer, nullable=True) # 0 = random, 1 = mix-level, 2 = same-level
+    gf_type = db.Column(db.Integer, nullable=True) # 0 = random, 1 = mix-level, 2 = same-level, 3 = similarity grouping
     gf_nr_per_group = db.Column(db.Integer, nullable=True)
 
     __table_args__ = (

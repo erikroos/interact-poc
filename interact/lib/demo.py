@@ -3,7 +3,9 @@ from interact.models import Seminar, Student, Slide, Answer
 
 def populate_for_demo(user_id, nr_students_at_gf=5):
     student_names = ["Henk", "Tjeerd", "Karel", "Piet", "Jan", "Kees"]
-    student_scores = [0, 2, 1, 2, 0]
+    student_scores =       [2, 1, 0, 1, 2, 0]
+    student_preparations = [4, 3, 3, 0, 1, 2]
+    student_motivations =  [3, 2, 5, 1, 2, 4]
 
     with app.app_context():
         test = Seminar("Test", 6, user_id)
@@ -36,8 +38,8 @@ def populate_for_demo(user_id, nr_students_at_gf=5):
         db.session.commit()
 
         slide4 = Slide(2, "Groepsvorming", 4, test.id)
-        slide4.gf_type = 2
-        slide4.gf_nr_per_group = 2
+        slide4.gf_type = 3 # similarity grouping
+        slide4.gf_nr_per_group = 3
         db.session.add(slide4)
         db.session.commit()
 
@@ -48,6 +50,8 @@ def populate_for_demo(user_id, nr_students_at_gf=5):
         students = []
         for i in range(6):
             student = Student(student_names[i], test.id)
+            student.preparation = student_preparations[i]
+            student.motivation = student_motivations[i]
             if i < nr_students_at_gf:
                 student.current_slide = 4
                 student.joined = True
