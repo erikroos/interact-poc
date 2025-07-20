@@ -50,12 +50,12 @@ def populate_for_demo(user_id, nr_students_at_gf=5):
         students = []
         for i in range(6):
             student = Student(student_names[i], test.id)
-            student.preparation = student_preparations[i]
-            student.motivation = student_motivations[i]
             if i < nr_students_at_gf:
                 student.current_slide = 4
                 student.joined = True
                 student.score = student_scores[i]
+                student.preparation = student_preparations[i]
+                student.motivation = student_motivations[i]
                 student.reached_gf = True
             students.append(student)
         db.session.add_all(students)

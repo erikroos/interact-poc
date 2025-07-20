@@ -35,6 +35,8 @@ def join(id:int):
                 # Mark student as 'joined' in the DB
                 student.joined = True
                 student.current_slide = 1
+                student.motivation = form.motivation.data
+                student.preparation = form.preparation.data
                 db.session.commit()
                 # Prepare session to track progress
                 session["student_id"] = student.id
