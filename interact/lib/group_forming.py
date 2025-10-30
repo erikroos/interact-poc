@@ -121,3 +121,23 @@ class GroupForming():
     
     def get_groups(self):
         return self.groups
+    
+# Static helper function to activate Group Forming:
+
+from interact import db
+from interact.models import Student, Group
+
+def activate_group_forming(seminar_id, gf_slide, forced=False):
+    students = Student.query.filter_by(seminar_id=seminar_id).all()
+    nr_groups = -(-len(students) // gf_slide.gf_nr_per_group) # rounded-up integer division
+    groups = [Group(seminar_id, n) for n in range(1, nr_groups+1)]
+    db.session.add_all(groups)
+    db.session.commit()
+    gf = GroupForming(gf_slide.gf_nr_per_group, students, groups)
+    gf.divide(gf_slide.gf_type)
+    students = gf.get_students()
+    if forced:
+        for student in students:
+            student.reached_gf = True
+    groups = gf.get_groups()
+    db.session.commit()

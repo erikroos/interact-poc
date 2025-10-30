@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import current_user
 from interact import db
 from interact.teachers.forms import NewSeminarForm, EnrollForm, NewSlideForm, DemoSeminarForm
-from interact.models import Seminar, Student, Slide, Answer
+from interact.models import Seminar, Student, Slide, Answer, Group
 from functools import wraps
 
 teachers_blueprint = Blueprint('teachers', __name__, template_folder='templates')
@@ -206,3 +206,18 @@ def demo():
             flash("Demo seminar set up")
             return redirect(url_for("teachers.index"))
     return render_template("demo_seminar.html", form=form)
+
+@teachers_blueprint.route("/force_gf/<int:id>")
+@user_required
+def force_gf(id:int):
+    seminar = Seminar.query.filter_by(id=id, user_id=current_user.id).first()
+    if seminar is None:
+        flash("Unknown or invalid seminar")
+        return redirect(url_for("teachers.index"))
+    
+    from interact.lib.group_forming import activate_group_forming
+    gf_slide = Slide.query.filter_by(seminar_id=seminar.id, type=2).first()
+    activate_group_forming(seminar.id, gf_slide, forced=True)
+    flash("Group forming done")
+    
+    return redirect(url_for("teachers.dashboard", id=seminar.id))

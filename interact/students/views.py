@@ -74,25 +74,17 @@ def seminar():
             if nr_students_reached_gf < seminar.nr_students:
                 return render_template("gf_slide_waiting.html", slide=current_slide, nr_slides=len(seminar.slides))
             else:
-                from interact.lib.group_forming import GroupForming
-                students = Student.query.filter_by(seminar_id=seminar.id).all()
-                nr_groups = -(-len(students) // current_slide.gf_nr_per_group) # rounded-up integer division
-                groups = [Group(seminar.id, n) for n in range(1, nr_groups+1)]
-                db.session.add_all(groups)
-                db.session.commit()
-                gf = GroupForming(current_slide.gf_nr_per_group, students, groups)
-                gf.divide(current_slide.gf_type)
-                students = gf.get_students()
-                groups = gf.get_groups()
-                db.session.commit()
+                from interact.lib.group_forming import activate_group_forming
+                activate_group_forming(seminar.id, current_slide)
                 return render_template("gf_slide_result.html", slide=current_slide, form=form, nr_slides=len(seminar.slides), student=student)
         else:
-            # POST, so group forming is complete
+            # POST, so we know group forming is complete and we can redirect the visitor to the next slide
             session["slide"] += 1
             student.current_slide += 1
             db.session.commit()
             return redirect(url_for("students.seminar"))
 
+    # Normal slide
     if request.method == "POST":
         if form.validate_on_submit:
             if current_slide.type == 0:

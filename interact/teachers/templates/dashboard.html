@@ -49,7 +49,9 @@ Dashboard
     <p>{{group.number}}: {% for student in group.students %}{{student.name}} ({{student.motivation}}, {{student.preparation}}, {{student.score}})&nbsp;{% endfor %}</p>
     {% endfor %}
 {% else %}
-    <p>There are no groups (yet).</p>
+    <p>There are no groups (yet). Group forming will start automatically once all students have reached the Group Forming slide.
+    Or, you can manually start the group forming process.</p>
+    <a class="btn btn-primary" href="{{ url_for('teachers.force_gf', id=seminar.id) }}">Force group forming</a>
 {% endif %}
 
 <script>
